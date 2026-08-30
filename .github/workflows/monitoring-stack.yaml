@@ -68,16 +68,16 @@ jobs:
             --set grafana.persistence.storageClassName=standard-rwo \
             --set-string grafana.adminUser="${{ secrets.GRAFANA_ADMIN_USER }}" \
             --set-string grafana.adminPassword="${{ secrets.GRAFANA_ADMIN_PASSWORD }}" \
-            --set grafana.resources.requests.cpu=150m \
+            --set grafana.resources.requests.cpu=200m \
             --set grafana.resources.requests.memory=256Mi \
-            --set grafana.resources.limits.cpu=500m \
-            --set grafana.resources.limits.memory=512Mi \
+            --set grafana.resources.limits.cpu=750m \
+            --set grafana.resources.limits.memory=768Mi \
             --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.resources.requests.storage=2Gi \
             --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.storageClassName=standard-rwo \
-            --set prometheus.prometheusSpec.resources.requests.cpu=500m \
-            --set prometheus.prometheusSpec.resources.requests.memory=1Gi \
-            --set prometheus.prometheusSpec.resources.limits.cpu=1000m \
-            --set prometheus.prometheusSpec.resources.limits.memory=2Gi \
+            --set prometheus.prometheusSpec.resources.requests.cpu=750m \
+            --set prometheus.prometheusSpec.resources.requests.memory=1.5Gi \
+            --set prometheus.prometheusSpec.resources.limits.cpu=1500m \
+            --set prometheus.prometheusSpec.resources.limits.memory=3Gi \
             --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.resources.requests.storage=2Gi \
             --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.storageClassName=standard-rwo \
             --set alertmanager.alertmanagerSpec.resources.requests.cpu=50m \
@@ -128,15 +128,15 @@ jobs:
             replicas: 1
             persistence:
               enabled: true
-              size: 5Gi
+              size: 8Gi
               storageClass: standard-rwo
             resources:
               requests:
-                cpu: 500m
-                memory: 512Mi
+                cpu: 750m
+                memory: 768Mi
               limits:
-                cpu: 1500m
-                memory: 1.5Gi
+                cpu: 2000m
+                memory: 2Gi
             service:
               type: ClusterIP
 
