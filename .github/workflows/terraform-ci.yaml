@@ -1,4 +1,4 @@
-name: Terraform workflow
+name: GCP Infrastructure Provision
 # on:
 #   push:
 #     branches:

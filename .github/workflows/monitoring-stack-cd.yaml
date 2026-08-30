@@ -1,4 +1,4 @@
-name: CD - Deploy Monitoring Stack
+name: Monitoring Stack Deployment
 
 on:
   workflow_dispatch:
