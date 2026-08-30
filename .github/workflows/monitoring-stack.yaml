@@ -121,7 +121,7 @@ jobs:
                     period: 24h
             limits_config:
               query_timeout: 300s
-              max_query_length: 744h
+              max_query_length: 0
               max_entries_limit_per_query: 10000
 
           singleBinary:
