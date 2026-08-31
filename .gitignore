@@ -3,3 +3,7 @@ terraform/.terraform.lock.hcl
 terraform/key.json
 terraform/*.tfvars
 
+Application/venv
+Application/.env
+
+.env

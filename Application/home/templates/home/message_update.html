@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+    <div>
+
+
+        <form action="" method="POST" autocomplete="off">
+            {% csrf_token %}
+
+                {{form.as_p}}
+
+            <button type="submit">Update</button>
+            <a href="{% url 'room' room.pk %}">Back x1</a>
+            <a href="{{request.META.HTTP_REFERER}}">Back x2</a>
+
+        </form>
+
+
+    </div>
+   
+{% endblock content %}

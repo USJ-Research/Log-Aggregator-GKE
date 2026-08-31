@@ -1,0 +1,80 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="{% static 'images/logo99.png' %}" type="image/x-icon" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <!-- For Flash Messages -->
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <title>J'Pura Vibe</title>
+  </head>
+
+  <body>
+
+
+    {% include 'navbar.html' %}
+    
+
+
+
+      <div style="text-align: center;">
+        {% if messages %}
+          {% for message in messages %}
+            <div id="closer" style="display: inline-block;">
+                <div id="msg-{{message.tags}}" style="display: inline-block; 
+                    padding: 10px 10px; 
+                    border-radius: 5px;"> 
+                    <span style="color: black;" >{{ message }}</span>
+                </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+
+
+
+    {% block content %}
+
+
+
+    {% endblock content %}
+
+    <script src="{% static 'js/script.js' %}"></script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

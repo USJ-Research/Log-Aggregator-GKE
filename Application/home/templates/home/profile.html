@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+  <main class="profile-page layout layout--3">
+    <div class="container">
+      <!-- Topics Start -->
+        {% include 'home/c1-topic.html' %}
+      <!-- Topics End -->
+
+      <!-- Room List Start -->
+      <div class="roomList">
+        <div class="profile">
+          <div class="profile__avatar">
+
+          {% if request.user == current_user %}
+           {% if current_user.profile.image %}
+            <div class="avatar avatar--large active">
+              <img src="{{current_user.profile.image.url}}" />
+            </div>
+           {% else %}
+            <div class="avatar avatar--large active">
+              <img src="{% static 'images/avatar.svg' %}" />
+            </div>
+           {% endif %}
+          {% else %}
+           {% if current_user.profile.image %}
+            <div class="avatar avatar--large ">
+              <img src="{{current_user.profile.image.url}}" />
+            </div>
+           {% else %}
+            <div class="avatar avatar--large ">
+              <img src="{% static 'images/avatar.svg' %}" />
+            </div>
+           {% endif %}
+          {% endif %}
+
+          </div>
+          <div class="profile__info">
+            <h3>{{current_user.username}}</h3>
+            <p>@{{current_user.username}}</p>
+
+            {% if request.user == current_user %}
+              <a href="{% url 'profile-update' current_user.username %}" class="btn btn--main btn--pill">Edit</a>
+              <a href="{% url 'profile-delete' current_user.username %}" class="btn btn--main btn--pill">Delete</a>
+            {% endif %}
+
+            </div>
+          <!-- <div class="profile__about">
+            <h3>About</h3>
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur illo tenetur
+              facilis sunt nemo debitis quisquam hic atque aut? Ducimus alias placeat optio
+              accusamus repudiandae quis ab ex exercitationem rem?
+            </p>
+          </div> -->
+        </div>
+
+        <div class="roomList__header">
+          <div>
+            <h2>Chat Rooms Hosted by {{current_user.username}}</a>
+            </h2>
+          </div>
+        </div>
+
+        {% include 'home/c2-feed.html' %}
+
+      </div>
+      <!-- Room List End -->
+
+      <!-- Activities Start -->
+      {% include 'home/c3-activity.html' %}
+      <!-- Activities End -->
+    </div>
+  </main>
+
+
+{% endblock content %}
