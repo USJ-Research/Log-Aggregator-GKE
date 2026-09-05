@@ -1,0 +1,39 @@
+name: CI - Build & Push Application
+
+on:
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GAR_REGION: ${{ secrets.GAR_LOCATION }}
+  GAR_REPOSITORY: ${{ secrets.GAR_REPOSITORY_NAME }}
+  IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
+  IMAGE_TAG: ${{ github.run_number }}
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker Authentication
+        run: gcloud auth configure-docker $GAR_REGION-docker.pkg.dev --quiet
+
+      - name: Build Docker Image
+        run: |
+          docker build \
+            -t $GAR_REGION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY/$IMAGE_NAME:$IMAGE_TAG \
+            ./Application
+
+      - name: Push Docker Image
+        run: |
+          docker push $GAR_REGION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY/$IMAGE_NAME:$IMAGE_TAG
