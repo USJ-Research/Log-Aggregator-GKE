@@ -110,4 +110,4 @@ jobs:
             --set secrets.emailHostUser="$EMAIL_HOST_USER" \
             --set secrets.emailHostPassword="$EMAIL_HOST_PASSWORD" \
             --atomic \
-            --timeout 10m
+            --timeout 5m
