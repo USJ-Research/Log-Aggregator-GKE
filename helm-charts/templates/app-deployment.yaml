@@ -1,0 +1,113 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.app.replicaCount }}
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+        - name: my-app-container
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
+          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.app.containerPort }}
+          resources:
+            requests:
+              memory: {{ .Values.app.resources.requests.memory | quote }}
+              cpu: {{ .Values.app.resources.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.app.resources.limits.memory | quote }}
+              cpu: {{ .Values.app.resources.limits.cpu | quote }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.app.probes.startup.path }}
+              port: {{ .Values.app.containerPort }}
+            initialDelaySeconds: {{ .Values.app.probes.startup.initialDelaySeconds }}
+            periodSeconds: {{ .Values.app.probes.startup.periodSeconds }}
+            timeoutSeconds: {{ .Values.app.probes.startup.timeoutSeconds }}
+            failureThreshold: {{ .Values.app.probes.startup.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.app.probes.readiness.path }}
+              port: {{ .Values.app.containerPort }}
+            initialDelaySeconds: {{ .Values.app.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.app.probes.readiness.periodSeconds }}
+            timeoutSeconds: {{ .Values.app.probes.readiness.timeoutSeconds }}
+            failureThreshold: {{ .Values.app.probes.readiness.failureThreshold }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.app.probes.liveness.path }}
+              port: {{ .Values.app.containerPort }}
+            initialDelaySeconds: {{ .Values.app.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.app.probes.liveness.periodSeconds }}
+            timeoutSeconds: {{ .Values.app.probes.liveness.timeoutSeconds }}
+            failureThreshold: {{ .Values.app.probes.liveness.failureThreshold }}
+          env:
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: DB_NAME
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: DB_USER
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: DB_PASS
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: DB_HOST
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: DB_PORT
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: SECRET_KEY
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_STORAGE_BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: AWS_STORAGE_BUCKET_NAME
+            - name: AWS_S3_REGION_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: AWS_S3_REGION_NAME
+            - name: EMAIL_HOST_USER
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: EMAIL_HOST_USER
+            - name: EMAIL_HOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: EMAIL_HOST_PASSWORD

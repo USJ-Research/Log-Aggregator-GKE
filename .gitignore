@@ -7,3 +7,5 @@ Application/venv
 Application/.env
 
 .env
+
+k8s-manifests

@@ -1,0 +1,89 @@
+namespace: logger
+app:
+  name: app
+  image:
+    repository: ""
+    tag: ""
+    pullPolicy: Always
+  replicaCount: 1
+  containerPort: ""
+  resources:
+    requests:
+      cpu: ""
+      memory: ""
+    limits:
+      cpu: ""
+      memory: ""
+  probes:
+    startup:
+      path: /start/
+      initialDelaySeconds: 0
+      periodSeconds: 5
+      timeoutSeconds: 5
+      failureThreshold: 60
+    readiness:
+      path: /ready/
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 2
+      failureThreshold: 3
+    liveness:
+      path: /live/
+      initialDelaySeconds: 20
+      periodSeconds: 10
+      timeoutSeconds: 2
+      failureThreshold: 3
+service:
+  name: ""
+  port: ""
+  targetPort: ""
+postgres:
+  serviceName: ""
+  image: postgres:16
+  containerPort: ""
+  resources:
+    requests:
+      cpu: ""
+      memory: ""
+    limits:
+      cpu: ""
+      memory: ""
+  storage:
+    size: ""
+  probes:
+    startup:
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 30
+    readiness:
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 3
+    liveness:
+      initialDelaySeconds: 20
+      periodSeconds: 10
+      timeoutSeconds: 3
+      failureThreshold: 3
+secrets:
+  dbName: ""
+  dbUser: ""
+  dbPass: ""
+  dbHost: ""
+  dbPort: ""
+  secretKey: ""
+  awsAccessKeyId: ""
+  awsSecretAccessKey: ""
+  awsStorageBucketName: ""
+  awsS3RegionName: ""
+  emailHostUser: ""
+  emailHostPassword: ""
+ingress:
+  staticIpName: ""
+  managedCertName: ""
+  appHost: ""
+  grafanaHost: ""
+  grafanaService:
+    name: ""
+    port: ""

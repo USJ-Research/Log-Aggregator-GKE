@@ -1,0 +1,5 @@
+apiVersion: v2
+name: uni-research-app
+description: Helm chart for Uni-Research App
+version: 0.1.0
+appVersion: "1.0"

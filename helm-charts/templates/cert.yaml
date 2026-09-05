@@ -1,0 +1,9 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: {{ .Values.ingress.managedCertName }}
+  namespace: {{ .Values.namespace }}
+spec:
+  domains:
+    - {{ .Values.ingress.appHost }}
+    - {{ .Values.ingress.grafanaHost }}
