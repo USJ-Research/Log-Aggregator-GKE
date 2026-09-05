@@ -1,0 +1,107 @@
+name: CD - Deploy Application
+
+on:
+  workflow_dispatch:
+    inputs:
+      namespace:
+        description: "Kubernetes namespace to deploy into"
+        required: true
+        type: choice
+        options:
+          - logger
+      image_tag:
+        description: "Image tag to deploy"
+        required: true
+        type: string
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GKE_CLUSTER: ${{ secrets.GKE_CLUSTER_NAME }}
+  GKE_ZONE: ${{ secrets.GKE_CLUSTER_LOCATION }}
+  GAR_REGION: ${{ secrets.GAR_LOCATION }}
+  GAR_REPOSITORY: ${{ secrets.GAR_REPOSITORY_NAME }}
+  IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
+  K8S_NAMESPACE: ${{ github.event.inputs.namespace }}
+  IMAGE_TAG: ${{ github.event.inputs.image_tag }}
+  STATIC_IP_NAME: ${{ secrets.STATIC_IP_NAME }}
+  DB_NAME: ${{ secrets.DB_NAME }}
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_PASS: ${{ secrets.DB_PASS }}
+  DB_HOST: ${{ secrets.DB_HOST }}
+  DB_PORT: ${{ secrets.DB_PORT }}
+  DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_STORAGE_BUCKET_NAME: ${{ secrets.AWS_STORAGE_BUCKET_NAME }}
+  AWS_S3_REGION_NAME: ${{ secrets.AWS_S3_REGION_NAME }}
+  EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+  EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          install_components: gke-gcloud-auth-plugin
+
+      - name: Connect to GKE Cluster
+        run: |
+          gcloud container clusters get-credentials "$GKE_CLUSTER" \
+            --zone "$GKE_ZONE" \
+            --project "$PROJECT_ID"
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+
+      - name: Helm Upgrade / Install
+        run: |
+          helm upgrade --install my-deployment ./helm-charts/deployment \
+            -n "$K8S_NAMESPACE" --create-namespace \
+            -f ./helm-charts/deployment/values.yaml \
+            --set app.image.repository="$GAR_REGION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY/$IMAGE_NAME" \
+            --set app.image.tag="$IMAGE_TAG" \
+            --set app.containerPort="8000" \
+            --set app.resources.requests.cpu="100m" \
+            --set app.resources.requests.memory="128Mi" \
+            --set app.resources.limits.cpu="250m" \
+            --set app.resources.limits.memory="256Mi" \
+            --set service.name="app-svc" \
+            --set service.port="8000" \
+            --set service.targetPort="8000" \
+            --set postgres.serviceName="postgres-svc" \
+            --set postgres.containerPort="5432" \
+            --set postgres.resources.requests.cpu="100m" \
+            --set postgres.resources.requests.memory="128Mi" \
+            --set postgres.resources.limits.cpu="250m" \
+            --set postgres.resources.limits.memory="256Mi" \
+            --set postgres.storage.size="2Gi" \
+            --set ingress.staticIpName="$STATIC_IP_NAME" \
+            --set ingress.managedCertName="app-mc" \
+            --set ingress.appHost="logger.duvindu.org" \
+            --set ingress.grafanaHost="grafana.duvindu.org" \
+            --set ingress.grafanaService.name="prometheus-grafana" \
+            --set ingress.grafanaService.port="80" \
+            --set secrets.dbName="$DB_NAME" \
+            --set secrets.dbUser="$DB_USER" \
+            --set secrets.dbPass="$DB_PASS" \
+            --set secrets.dbHost="$DB_HOST" \
+            --set secrets.dbPort="$DB_PORT" \
+            --set secrets.secretKey="$DJANGO_SECRET_KEY" \
+            --set secrets.awsAccessKeyId="$AWS_ACCESS_KEY_ID" \
+            --set secrets.awsSecretAccessKey="$AWS_SECRET_ACCESS_KEY" \
+            --set secrets.awsStorageBucketName="$AWS_STORAGE_BUCKET_NAME" \
+            --set secrets.awsS3RegionName="$AWS_S3_REGION_NAME" \
+            --set secrets.emailHostUser="$EMAIL_HOST_USER" \
+            --set secrets.emailHostPassword="$EMAIL_HOST_PASSWORD" \
+            --atomic \
+            --timeout 10m
