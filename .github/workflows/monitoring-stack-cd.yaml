@@ -43,11 +43,17 @@ jobs:
       - name: Connect to GKE Cluster
         run: gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE" --project "$GCP_PROJECT_ID"
 
-      - name: Setup Helm
-        uses: azure/setup-helm@v4
-
       - name: Ensure namespace exists
         run: kubectl create namespace "$K8S_NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Fix namespace ownership for Helm
+        run: |
+          kubectl label namespace "$K8S_NAMESPACE" app.kubernetes.io/managed-by=Helm --overwrite
+          kubectl annotate namespace "$K8S_NAMESPACE" meta.helm.sh/release-name=prometheus --overwrite
+          kubectl annotate namespace "$K8S_NAMESPACE" meta.helm.sh/release-namespace="$K8S_NAMESPACE" --overwrite
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
 
       - name: Add Helm repos
         run: |
