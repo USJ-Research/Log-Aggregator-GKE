@@ -71,9 +71,9 @@ jobs:
 
       - name: Helm Upgrade / Install
         run: |
-          helm upgrade --install my-deployment ./helm-charts/deployment \
+          helm upgrade --install my-deployment ./helm-charts/my-deployment \
             -n "$K8S_NAMESPACE" --create-namespace \
-            -f ./helm-charts/deployment/values.yaml \
+            -f ./helm-charts/my-deployment/values.yaml \
             --set app.image.repository="$GAR_REGION-docker.pkg.dev/$PROJECT_ID/$GAR_REPOSITORY/$IMAGE_NAME" \
             --set app.image.tag="$IMAGE_TAG" \
             --set app.containerPort="8000" \
