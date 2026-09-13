@@ -78,12 +78,14 @@ jobs:
             --set grafana.resources.requests.memory=256Mi \
             --set grafana.resources.limits.cpu=750m \
             --set grafana.resources.limits.memory=768Mi \
-            --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.resources.requests.storage=2Gi \
+            --set prometheus.prometheusSpec.retention=30d \
+            --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.resources.requests.storage=30Gi \
             --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.storageClassName=standard-rwo \
             --set prometheus.prometheusSpec.resources.requests.cpu=750m \
             --set prometheus.prometheusSpec.resources.requests.memory=1.5Gi \
             --set prometheus.prometheusSpec.resources.limits.cpu=1500m \
             --set prometheus.prometheusSpec.resources.limits.memory=3Gi \
+            --set alertmanager.alertmanagerSpec.retention=720h \
             --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.resources.requests.storage=2Gi \
             --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.storageClassName=standard-rwo \
             --set alertmanager.alertmanagerSpec.resources.requests.cpu=50m \
@@ -129,12 +131,16 @@ jobs:
               query_timeout: 300s
               max_query_length: 0
               max_entries_limit_per_query: 10000
+              retention_period: 720h
+            compactor:
+              retention_enabled: true
+              delete_request_store: filesystem
 
           singleBinary:
             replicas: 1
             persistence:
               enabled: true
-              size: 8Gi
+              size: 30Gi
               storageClass: standard-rwo
             resources:
               requests:
