@@ -90,7 +90,7 @@ jobs:
             --set postgres.resources.requests.memory="128Mi" \
             --set postgres.resources.limits.cpu="250m" \
             --set postgres.resources.limits.memory="256Mi" \
-            --set postgres.storage.size="2Gi" \
+            --set postgres.storage.size="5Gi" \
             --set ingress.staticIpName="$STATIC_IP_NAME" \
             --set ingress.managedCertName="app-mc" \
             --set ingress.appHost="logger.duvindu.org" \
