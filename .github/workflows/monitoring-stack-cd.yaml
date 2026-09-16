@@ -130,7 +130,7 @@ jobs:
             limits_config:
               query_timeout: 300s
               max_query_length: 0
-              max_entries_limit_per_query: 10000
+              max_entries_limit_per_query: 5000
               retention_period: 720h
             compactor:
               retention_enabled: true
